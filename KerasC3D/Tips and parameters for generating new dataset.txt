@@ -1,0 +1,1 @@
+* Check Fps. since we use pretrained filters and random segments from each action class, fps change cause dramatically change in the ways of input information. change this parameter and learn how fps affect the accuracy of the training

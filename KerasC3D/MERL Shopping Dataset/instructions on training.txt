@@ -1,0 +1,5 @@
+Training:
+
+* Randomly extract 5, 2 second long clips from each video and resize each one of them to 128*171
+* Crop them 16*112*112 clips and randomly flip them horizontally(50% probability)
+

@@ -15,7 +15,7 @@ with open('labels.txt', 'r') as f:
 
 print('Total labels: {}'.format(len(labels)))
 
-cap = cv2.VideoCapture('video2.mp4')
+cap = cv2.VideoCapture('video4.mp4')
 
 vid=[]
 
@@ -31,7 +31,7 @@ vid = np.array(vid, dtype=np.float32)
 
 mean_cube = np.load('train01_16_128_171_mean.npy') ## Check whether mean is float32
 mean_cube = mean_cube[:, :, 8:120, 30:142]
-FRAME_START = 800
+FRAME_START = 2000
 X = vid[FRAME_START:FRAME_START+16, 8:120, 30:142, :].transpose((3, 0, 1, 2))
 X = X - mean_cube
 print "****video loaded.."
@@ -50,10 +50,10 @@ print('Corresponding label: {}'.format(labels[output[0].argmax()]))
 top_inds = output[0].argsort()[::-1][:5]  # reverse sort and take five largest items
 for i in top_inds: print('{:.5f} {}'.format(output[0][i], labels[i]))
 print "\n\n Playing Video in a continuous loop..."
+
 def playClip(frames):
-    while True:
-        for frame in frames:
-            plt.imshow(frame)
-            plt.pause(0.05)
+    for frame in frames:
+        plt.imshow(frame)
+        plt.pause(0.05)
 
 playClip(original_video[FRAME_START:FRAME_START+16])
