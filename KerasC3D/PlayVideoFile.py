@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 print "start .."
-captured = cv2.VideoCapture('/home/tharindu/PycharmProjects/KerasC3D/MERL Shopping Dataset/Videos_MERL_Shopping_Dataset/1_1_crop.mp4')
+captured = cv2.VideoCapture('/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/MERL Shopping Dataset/Videos_MERL_Shopping_Dataset/1_1_crop.mp4')
 print "loaded video.."
 video = []
 i = 0
@@ -28,7 +28,7 @@ while True:
 
 
 
-print "Done formatting.."
+print "Done formatting: video length = " + str(len(video))
 len = len(video)
 for i in xrange(16):
     figure = plt.figure()
