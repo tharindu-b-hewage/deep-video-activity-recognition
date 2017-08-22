@@ -4,17 +4,19 @@ import random
 import numpy as np
 import cv2
 from pandas._window import random
+import matplotlib.pyplot as plt
 
-mat = scipy.io.loadmat('/home/tharindu/PycharmProjects/KerasC3D/MERL Shopping Dataset/Labels_MERL_Shopping_Dataset/1_1_label.mat')
 
 # Process each video
 # Downsample every video chunck for a specific class in to 16 frames using data from label array
 # Parallely create label array relevant to each video chunk
 # Those would be our training data
 
-
+#--- Parameters---
 CNN_VIDEO_LEN = 16
 NUMBER_OF_RANDOM_SAMPLES_PER_CHUNK = 5
+FPS_REDUCE_SCALE = 3
+
 
 def reduce_fps(frame_array, REDUCE_FACTOR):
     output = []
@@ -51,7 +53,7 @@ def generate_data(video_path, label_path):
     for i in xrange(5):
         #Each video chunk in the same class defined as in labels
         for video_chunk in label_data['tlabs'][0][i]:
-            video_segment = reduce_fps([video_chunk[0], video_chunk[1]], 3)
+            video_segment = reduce_fps([video_chunk[0], video_chunk[1]], FPS_REDUCE_SCALE)
             length = len(video_segment)
             list = range(length)
             randomly_picked_slices = []
@@ -65,3 +67,17 @@ def generate_data(video_path, label_path):
             for slice in randomly_picked_slices:
                 data_file.append(video_segment[slice[0]:slice[1]])
                 label_file.append(i)
+
+    return data_file, label_file
+
+
+
+#------------ Test this file -----------
+video_path = "/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/MERL Shopping Dataset/Videos_MERL_Shopping_Dataset/1_1_crop.mp4"
+label_path = "/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/MERL Shopping Dataset/Labels_MERL_Shopping_Dataset/1_1_label.mat"
+
+data, label = generate_data(video_path, label_path)
+
+for frame in data[0]:
+    plt.imshow(frame)
+    plt.show()
