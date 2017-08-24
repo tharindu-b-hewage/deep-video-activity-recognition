@@ -24,9 +24,7 @@ def reduce_fps(frame_array, REDUCE_FACTOR):
         output.append(frame_array[i])
     return output
 
-def generate_data(video_path, label_path):
-    data_file = []
-    label_file = []
+def generate_data(video_path, label_path, video_list, label_list):
     label_data = scipy.io.loadmat(label_path)
 
     #load video frames
@@ -38,7 +36,7 @@ def generate_data(video_path, label_path):
             #print "broke!"
             break
         resized = cv2.resize(img, (171, 128))
-        cropped = resized[8:120, 30:142, :]
+        cropped = resized[16:128, 55:167, :]
         video.append(cropped)
     #print 'Loaded video length: '+str(len(video))
 
@@ -63,22 +61,35 @@ def generate_data(video_path, label_path):
 
             # Now we have indexes for randomly picked samples for a specific category for our selected instance
             for slice in randomly_picked_slices:
-                data_file.append(video_segment[slice[0]:(slice[-1]+1)])
+                video_list.append(video_segment[slice[0]:(slice[-1]+1)])
                 #print 'appending length: '+str(len(video_segment[slice[0]:(slice[-1]+1)]))
-                label_file.append(category_number)
-
-    return data_file, label_file
+                label_list.append(category_number)
 
 def writeVideo(frame_array, video_file_name):
-    cv2.VideoWriter(video_file_name, )
+    print frame_array[0].shape
+    video_writer = cv2.VideoWriter(video_file_name, cv2.cv.CV_FOURCC(*'XVID'), 30/FPS_REDUCE_SCALE, (112, 112), True)
+    for frame in frame_array:
+        video_writer.write(frame)
+    video_writer.release()
 
 
 #------------ Test this file -----------
 video_path = '/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/MERL Shopping Dataset/Videos_MERL_Shopping_Dataset/1_1_crop.mp4'
 label_path = "/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/MERL Shopping Dataset/Labels_MERL_Shopping_Dataset/1_1_label.mat"
+data = []
+label = []
+generate_data(video_path, label_path, data, label)
 
-data, label = generate_data(video_path, label_path)
+print 'done generating...'
+print 'videos: '+str(len(data))
+while True:
+    response = raw_input("Enter File: ")
+    if response==-1:
+        break
+    print 'Category: '+str(label[int(response)])
+    writeVideo(data[int(response)], '/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/test.avi')
 
+print 'done writing....'
 #for frame in data[0]:
 #    plt.imshow(frame)
 #    plt.show()
