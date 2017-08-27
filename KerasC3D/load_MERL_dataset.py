@@ -78,7 +78,9 @@ class MERL_Dataset:
                     video_list.append(video_segment[slice[0]:(slice[-1] + 1)])
                     #print 'appending length: '+str(len(video_segment[slice[0]:(slice[-1]+1)]))
                     #print '-------- Appending dim: ' + str(video_segment[slice[0]].shape)
-                    label_list.append(category_number)
+                    target = np.zeros(5)
+                    target[category_number] = 1
+                    label_list.append(target)
         #print 'Test: Generate info = ' + str(len(video_list[0]))
 
     def generate_numpy_array(self, video_path, label_path, leading_start_index, leading_stop_index): # video path should be the directory of the video files and same goes for the labels
@@ -89,19 +91,18 @@ class MERL_Dataset:
                 video_string = video_path + "/" + str(leading_index)+"_"+str(following_index)+"_crop.mp4"
                 label_string = label_path + "/" + str(leading_index)+"_"+str(following_index)+"_label.mat"
                 if os.path.exists(video_string): # check whether this file exists in the directory
+                    print 'Generating for: ' + str(leading_index)+"_"+str(following_index)
                     self.__generate_data_per_video(video_string, label_string, data, label)
                 else:
                     break
         self.data_array = np.array(data)
         self.label_array = np.array(label)
 
-        return data, label
+        return self.data_array, self.label_array
 
-    def save(self, location_path):
-        if data==None:
-            return False
-        np.save(location_path+"MERL_shopping_data", data)
-        np.save(location_path+"MERL_shopping_label", label)
+    def save(self, location_path, counter=0):
+        np.save(location_path+"MERL_numpy/MERL_shopping_data_" + str(counter), self.data_array)
+        np.save(location_path+"MERL_numpy/MERL_shopping_label_" + str(counter), self.label_array)
         return True
 
 
@@ -111,15 +112,17 @@ video_path = '/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition
 label_path = "/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/MERL Shopping Dataset/Labels_MERL_Shopping_Dataset"
 
 dataset = MERL_Dataset()
-data, label = dataset.generate_numpy_array(video_path, label_path, 1, 2)
-dataset.save("")
-print 'done generating...'
-while True:
-    response = raw_input("Enter File: ")
-    if response==-1:
-        break
-    print 'Category: '+str(label[int(response)])
-    MERL_Dataset.writeVideo(data[int(response)], '/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/test.avi')
 
+for i in xrange(1, 42, 6):
+    data, label = dataset.generate_numpy_array(video_path, label_path, i, i+5)
+    dataset.save('', i)
+#print 'done generating...'
+#while True:
+    #response = raw_input("Enter File: ")
+    #if response==-1:
+    #    break
+    #print 'Category: '+str(label[int(response)])
+    #MERL_Dataset.writeVideo(data[int(response)], '/home/lorddbaelish/PycharmProjects/deep-video-activity-recognition/KerasC3D/test.avi')
+   # print "Test:- Shape = " + str(np.array(data[int(response)]).shape)
 
-print 'done writing....'
+#print 'done writing....'
